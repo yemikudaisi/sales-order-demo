@@ -1,8 +1,12 @@
 ### Demo
 
-Demo
+Demo App for Sales Order Fufillment Page
 
-### ScreenShots
+### Screenshots
+
+#### Requirement
+
+![alt text](imgs/requirement.jpg "Requirement")
 
 #### Sale Order Expanded
 
