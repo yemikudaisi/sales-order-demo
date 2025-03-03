@@ -21,9 +21,8 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
         default: frappe.datetime.get_today(),
     })
 
-		page.sort_by = "transaction_date"; // Default sort by field
+    page.sort_by = "transaction_date"; // Default sort by field
     page.sort_order = "asc"; // Default sort order
-
 
     page.sort_selector = new frappe.ui.SortSelector({
         parent: page.wrapper.find(".page-form"),
@@ -45,27 +44,55 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
     });
 
     page.refresh = function () {
-			console.log(page.sort_order)
-			frappe.call({
-					method: 'demo.demo.controllers.queries.get_sales_orders',
-					args: {
-							from_date: page.from_field.get_value(),
-							to_date: page.to_field.get_value(),
-							sort_by: page.sort_by,
-							sort_order: page.sort_order,
-							start: page.start,
-							page_length: page.page_length
-					},
-					callback: function (r) {
-							var $list = $(page.wrapper).find('.result-list').empty();
-							if (r.message) {
-									$.each(r.message, function (i, d) {
-											$list.append('<div>' + d.name + ' - ' + d.transaction_date + ' - ' + d.customer_name + ' - ' + d.grand_total + '</div>');
-									});
-							}
-					}
-			});
-	};
+        frappe.call({
+            method: 'demo.demo.controllers.queries.get_sales_orders',
+            args: {
+                from_date: page.from_field.get_value(),
+                to_date: page.to_field.get_value(),
+                sort_by: page.sort_by,
+                sort_order: page.sort_order,
+                start: page.start,
+                page_length: page.page_length
+            },
+            callback: function (r) {
+                var $list = $(page.wrapper).find('.result-list').empty();
+                if (r.message) {
+                    var table = `
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="select-all"></th>
+                                    <th>${__('Order ID')}</th>
+                                    <th>${__('Transaction Date')}</th>
+                                    <th>${__('Customer Name')}</th>
+                                    <th>${__('Grand Total')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    $.each(r.message, function (i, d) {
+                        table += `
+                            <tr>
+                                <td><input type="checkbox" class="select-order" data-order-id="${d.name}"></td>
+                                <td>${d.name}</td>
+                                <td>${d.transaction_date}</td>
+                                <td>${d.customer_name}</td>
+                                <td>${d.grand_total}</td>
+                            </tr>
+                        `;
+                    });
+                    table += `</tbody></table>`;
+                    $list.append(table);
+
+                    // Add event listener for select all checkbox
+                    $(page.wrapper).find('.select-all').on('change', function () {
+                        var checked = $(this).is(':checked');
+                        $(page.wrapper).find('.select-order').prop('checked', checked);
+                    });
+                }
+            }
+        });
+    };
 
     // Add pagination controls
     $(page.wrapper).find('.page-content').append(`
@@ -73,6 +100,9 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
         <div class="pagination-controls">
             <button class="btn btn-default btn-prev">${__('Previous')}</button>
             <button class="btn btn-default btn-next">${__('Next')}</button>
+        </div>
+        <div class="primary-action">
+            <button class="btn btn-primary btn-print-order-id">${__('Print Order ID')}</button>
         </div>
     `);
 
@@ -87,6 +117,27 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
         page.start += page.page_length;
         page.refresh();
     });
+
+		let printBtn = page.set_primary_action('Print Order ID', () => {
+			var selected_orders = [];
+        $(page.wrapper).find('.select-order:checked').each(function () {
+            selected_orders.push($(this).data('order-id'));
+        });
+
+        if (selected_orders.length > 0) {
+            frappe.msgprint({
+                title: __('Selected Order IDs'),
+                message: selected_orders.join(', '),
+                indicator: 'blue'
+            });
+        } else {
+            frappe.msgprint({
+                title: __('No Orders Selected'),
+                message: __('Please select at least one order.'),
+                indicator: 'red'
+            });
+        }
+		})
 
     page.refresh();
 }
