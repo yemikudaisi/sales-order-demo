@@ -5,7 +5,7 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
         single_column: true
     });
     page.start = 0;
-    page.page_length = 20; // Number of records per page
+    page.page_length = 20;
 
     page.from_field = page.add_field({
         fieldname: 'from_date',
@@ -21,8 +21,8 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
         default: frappe.datetime.get_today(),
     })
 
-    page.sort_by = "transaction_date"; // Default sort by field
-    page.sort_order = "asc"; // Default sort order
+    page.sort_by = "transaction_date";
+    page.sort_order = "asc";
 
     page.sort_selector = new frappe.ui.SortSelector({
         parent: page.wrapper.find(".page-form"),
@@ -36,7 +36,7 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
             ],
         },
         change: function (sort_by, sort_order) {
-            sort_order = sort_order || "asc"; // Set default sort order if undefined
+            sort_order = sort_order || "asc";
             console.log(sort_by, sort_order);
             page.sort_by = sort_by;
             page.sort_order = sort_order;
@@ -93,13 +93,11 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
                     table += `</tbody></table>`;
                     $list.append(table);
 
-                    // Add event listener for select all checkbox
                     $(page.wrapper).find('.select-all').on('change', function () {
                         var checked = $(this).is(':checked');
                         $(page.wrapper).find('.select-order').prop('checked', checked);
                     });
 
-                    // Add event listener for expand buttons
                     $(page.wrapper).find('.btn-expand').on('click', function () {
                         var $btn = $(this);
                         var $orderRow = $btn.closest('tr');
@@ -158,7 +156,6 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
         });
     };
 
-    // Add pagination controls
     $(page.wrapper).find('.page-content').append(`
         <div class="result-list" style="padding: 5px"></div>
         <div class="list-paging-area level" style="padding: 5px 10px;">
@@ -186,7 +183,6 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
         page.refresh();
     });
 
-    // Add event listener for paging buttons
     $(page.wrapper).find('.btn-paging').on('click', function () {
         var $btn = $(this);
         page.page_length = parseInt($btn.data('value'));
@@ -196,7 +192,6 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
         page.refresh();
     });
 
-    // Add primary action for "Print Order ID"
     page.set_primary_action(__('Print Order ID'), function () {
         var selected_orders = [];
         $(page.wrapper).find('.select-order:checked').each(function () {

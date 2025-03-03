@@ -2,6 +2,25 @@
 
 Demo
 
+### ScreenShots
+
+#### Sale Order Expanded
+
+![alt text](imgs/expanded.png "Expanded")
+
+#### Print Sales Order ID
+
+![alt text](imgs/print-so-id.png "Print ID")
+
+#### Sort Sales Order
+
+![alt text](imgs/sort.png "Sort SOs")
+
+
+### Conditions
+
+- Sales order has been submitted
+- Sales Order not completed
 ### Installation
 
 You can install this app using the [bench](https://github.com/frappe/bench) CLI:
