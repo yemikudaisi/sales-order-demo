@@ -35,9 +35,33 @@ def get_sales_orders(from_date, to_date, sort_by, sort_order, start, page_length
 
 @frappe.whitelist()
 def get_sales_order_items(order_id):
-    items = frappe.get_list(
-        'Sales Order Item',
-        fields=['item_code', 'item_name', 'qty', 'rate', 'amount'],
-        filters={'parent': order_id}
-    )
+    """
+    Retrieve sales order items for a given sales order ID.
+
+    Args:
+      order_id (str): The ID of the sales order.
+
+    Returns:
+      list[dict]: A list of dictionaries, each containing the following keys:
+        - item_code (str): The code of the item.
+        - item_name (str): The name of the item.
+        - qty (float): The quantity of the item ordered.
+        - rate (float): The rate of the item.
+        - amount (float): The total amount for the item.
+    """
+    query = """
+        SELECT
+            soi.item_code,
+            i.item_name,
+            soi.qty,
+            soi.rate,
+            soi.amount
+        FROM
+            `tabSales Order Item` soi
+        JOIN
+            `tabItem` i ON soi.item_code = i.name
+        WHERE
+            soi.parent = %s
+    """
+    items = frappe.db.sql(query, order_id, as_dict=True)
     return items
