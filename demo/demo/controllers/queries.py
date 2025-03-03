@@ -32,3 +32,12 @@ def get_sales_orders(from_date, to_date, sort_by, sort_order, start, page_length
     )
     
     return sales_orders
+
+@frappe.whitelist()
+def get_sales_order_items(order_id):
+    items = frappe.get_list(
+        'Sales Order Item',
+        fields=['item_code', 'item_name', 'qty', 'rate', 'amount'],
+        filters={'parent': order_id}
+    )
+    return items
