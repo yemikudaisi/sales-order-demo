@@ -83,7 +83,7 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
                                 <td>${d.grand_total}</td>
                                 <td><button class="btn btn-default btn-expand">${__('More')}</button></td>
                             </tr>
-                            <tr class="order-items" data-order-id="${d.name}" style="display: none; background: #FCFCFC;">
+                            <tr class="order-items bg-gray-50" data-order-id="${d.name}" style="display: none;">
                                 <td colspan="6">
                                     <div class="order-items-content" style="padding: 10px"></div>
                                 </td>
