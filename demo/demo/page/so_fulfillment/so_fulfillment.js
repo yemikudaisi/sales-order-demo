@@ -12,14 +12,20 @@ frappe.pages['so-fulfillment'].on_page_load = function (wrapper) {
         label: __('From Date'),
         fieldtype: 'Date',
         default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
-    })
+        change: function() {
+            page.refresh();
+        }
+    });
 
     page.to_field = page.add_field({
         fieldname: 'to_date',
         label: __('To Date'),
         fieldtype: 'Date',
         default: frappe.datetime.get_today(),
-    })
+        change: function() {
+            page.refresh();
+        }
+    });
 
     page.sort_by = "transaction_date";
     page.sort_order = "asc";

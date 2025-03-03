@@ -18,9 +18,9 @@ def get_sales_orders(from_date, to_date, sort_by, sort_order, start, page_length
     filters = [
         ['docstatus', '=', 1],  # Submitted documents
         ['status', '!=', 'Completed'],
-        ['transaction_date', '>=', from_date],
-        ['transaction_date', '<=', to_date]
+        ['transaction_date','between', [from_date, to_date]],
     ]
+    print(f'Filters: {filters}')
     
     sales_orders = frappe.get_list(
         'Sales Order',
